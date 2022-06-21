@@ -7,13 +7,19 @@ fn parse_color(mut hex_color: String) -> Option<Color> {
     i32::from_str_radix(&hex_color, 16).map(Color::from).ok()
 }
 
+fn strip_text(text: String) -> String {
+    let plain = text.replace("<br>", "\n");
+
+    plain.lines().take(1).collect()
+}
+
 pub fn anime_embed_builder(anime: Anime, e: &mut CreateEmbed) -> &mut CreateEmbed {
     if let Some(romaji_title) = anime.title.romaji {
         e.title(romaji_title).url(anime.site_url);
     }
 
     if let Some(description) = anime.description {
-        e.description(description.replace("<br>", "\n"));
+        e.description(strip_text(description));
     }
 
     e.field("Format", anime.format, true);
