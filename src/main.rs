@@ -27,7 +27,11 @@ async fn main() -> Result<()> {
 
     let framework = poise::Framework::build()
         .options(poise::FrameworkOptions {
-            commands: vec![anilist::anime(), admin::commands::register()],
+            commands: vec![
+                anilist::anime(),
+                anilist::manga(),
+                admin::commands::register(),
+            ],
             ..Default::default()
         })
         .token(std::env::var("BOT_TOKEN").expect("Missing BOT_TOKEN"))

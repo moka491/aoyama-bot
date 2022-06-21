@@ -38,6 +38,24 @@ pub struct Anime {
 }
 
 #[derive(Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct Manga {
+    pub id: u32,
+    pub title: MediaTitle,
+    pub description: Option<String>,
+    pub format: MediaFormat,
+    pub chapters: Option<u16>,
+    pub volumes: Option<u16>,
+    pub status: MediaStatus,
+    pub average_score: Option<u8>,
+    pub studios: StudioConnection,
+    pub source: Option<Source>,
+    pub genres: Vec<String>,
+    pub site_url: String,
+    pub cover_image: MediaCoverImage,
+}
+
+#[derive(Deserialize, Clone)]
 pub struct MediaTitle {
     pub romaji: Option<String>,
     pub english: Option<String>,
