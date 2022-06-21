@@ -13,7 +13,7 @@ pub struct ContextData {
     pub client: Client,
 }
 
-pub type Context<'a> = poise::Context<'a, ContextData, anyhow::Error>;
+pub type CommandContext<'a> = poise::Context<'a, ContextData, anyhow::Error>;
 
 async fn init_context() -> Result<ContextData> {
     let client: Client = reqwest::Client::new();
@@ -30,7 +30,8 @@ async fn main() -> Result<()> {
             commands: vec![
                 anilist::anime(),
                 anilist::manga(),
-                admin::commands::register(),
+                thread::ping(),
+                admin::register(),
             ],
             ..Default::default()
         })

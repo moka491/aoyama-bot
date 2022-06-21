@@ -5,7 +5,7 @@ use poise::serenity_prelude::{
     InteractionResponseType,
 };
 
-use crate::Context;
+use crate::CommandContext;
 use anyhow::Result;
 
 pub type EmbedBuilder<T> = fn(T, &mut CreateEmbed) -> &mut CreateEmbed;
@@ -62,7 +62,7 @@ where
         })
     }
 
-    pub async fn send(&mut self, ctx: Context<'_>) -> Result<()> {
+    pub async fn send(&mut self, ctx: CommandContext<'_>) -> Result<()> {
         let mut msg = ctx
             .send(|m| {
                 m.embed(|e| self.build_embed(e))
