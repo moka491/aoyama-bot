@@ -44,19 +44,19 @@ where
         c.create_action_row(|ar| {
             ar.create_button(|b| {
                 b.style(ButtonStyle::Primary)
-                    .emoji('◀')
+                    .label('◀')
                     .custom_id("button_prev")
                     .disabled(is_first_page)
             })
             .create_button(|b| {
                 b.style(ButtonStyle::Primary)
-                    .emoji('▶')
+                    .label('▶')
                     .custom_id("button_next")
                     .disabled(is_last_page)
             })
             .create_button(|b| {
                 b.style(ButtonStyle::Primary)
-                    .emoji('✅')
+                    .label('⏹')
                     .custom_id("button_done")
             })
         })
