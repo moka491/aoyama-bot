@@ -1,4 +1,7 @@
-use crate::Context;
+mod embeds;
+
+use crate::anilist::embeds::anime_embed_builder;
+use crate::{core::menu::Menu, Context};
 use anyhow::Result;
 
 use crate::api::anilist;
@@ -11,16 +14,7 @@ pub async fn anime(
 ) -> Result<()> {
     let anime = anilist::find_anime(&reqwest::Client::new(), &name).await?;
 
-    let names: Vec<String> = anime
-        .into_iter()
-        .filter_map(|anime| anime.title.romaji)
-        .collect();
-
-    ctx.say(format!(
-        "found the following anime: \n {}",
-        names.join("\n")
-    ))
-    .await?;
+    Menu::from(anime, anime_embed_builder).send(ctx).await?;
 
     Ok(())
 }

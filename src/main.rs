@@ -1,5 +1,6 @@
 mod api;
 mod commands;
+mod core;
 
 use commands::*;
 

@@ -1,24 +1,24 @@
 use serde::Deserialize;
 
 /* Helper structs for api responses */
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Response<T> {
     pub data: T,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Page<T> {
     #[serde(rename = "Page")]
     pub page: T,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Media<T> {
     pub media: Vec<T>,
 }
 
 /* Actually relevant data structs */
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Anime {
     pub id: u32,
@@ -37,13 +37,13 @@ pub struct Anime {
     pub cover_image: MediaCoverImage,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct MediaTitle {
     pub romaji: Option<String>,
     pub english: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaFormat {
     Tv,
@@ -58,7 +58,7 @@ pub enum MediaFormat {
     OneShot,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaStatus {
     Finished,
@@ -68,7 +68,7 @@ pub enum MediaStatus {
     Hiatus,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaSeason {
     Winter,
@@ -77,17 +77,17 @@ pub enum MediaSeason {
     Fall,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct StudioConnection {
     pub nodes: Vec<Studio>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Studio {
     pub name: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Source {
     Original,
@@ -107,7 +107,7 @@ pub enum Source {
     PictureBook,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct MediaCoverImage {
     pub medium: String,
     pub color: Option<String>,
