@@ -58,6 +58,24 @@ pub enum MediaFormat {
     OneShot,
 }
 
+impl ToString for MediaFormat {
+    fn to_string(&self) -> String {
+        match self {
+            MediaFormat::Manga => "Manga",
+            MediaFormat::Tv => "TV",
+            MediaFormat::TvShort => "TV Short",
+            MediaFormat::Movie => "Movie",
+            MediaFormat::Special => "Special",
+            MediaFormat::Ova => "OVA",
+            MediaFormat::Ona => "ONA",
+            MediaFormat::Music => "Music",
+            MediaFormat::Novel => "Novel",
+            MediaFormat::OneShot => "One-Shot",
+        }
+        .into()
+    }
+}
+
 #[derive(Deserialize, Clone)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaStatus {
@@ -68,6 +86,19 @@ pub enum MediaStatus {
     Hiatus,
 }
 
+impl ToString for MediaStatus {
+    fn to_string(&self) -> String {
+        match self {
+            MediaStatus::Finished => "Finished",
+            MediaStatus::Releasing => "Releasing",
+            MediaStatus::NotYetReleased => "Not yet released",
+            MediaStatus::Cancelled => "Cancelled",
+            MediaStatus::Hiatus => "On hiatus",
+        }
+        .into()
+    }
+}
+
 #[derive(Deserialize, Clone)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum MediaSeason {
@@ -75,6 +106,18 @@ pub enum MediaSeason {
     Spring,
     Summer,
     Fall,
+}
+
+impl ToString for MediaSeason {
+    fn to_string(&self) -> String {
+        match self {
+            MediaSeason::Winter => "Winter",
+            MediaSeason::Spring => "Spring",
+            MediaSeason::Summer => "Summer",
+            MediaSeason::Fall => "Fall",
+        }
+        .into()
+    }
 }
 
 #[derive(Deserialize, Clone)]
@@ -105,6 +148,29 @@ pub enum Source {
     Comic,
     MultimediaProject,
     PictureBook,
+}
+
+impl ToString for Source {
+    fn to_string(&self) -> String {
+        match self {
+            Source::Original => "Original",
+            Source::Manga => "Manga",
+            Source::LightNovel => "Light Novel",
+            Source::VisualNovel => "Visual Novel",
+            Source::VideoGame => "Video Game",
+            Source::Other => "Other",
+            Source::Novel => "Novel",
+            Source::Doujinshi => "Doujinshi",
+            Source::Anime => "Anime",
+            Source::WebNovel => "Web Novel",
+            Source::LiveAction => "Live Action",
+            Source::Game => "Game",
+            Source::Comic => "Comic",
+            Source::MultimediaProject => "Multimedia Project",
+            Source::PictureBook => "Picture Book",
+        }
+        .into()
+    }
 }
 
 #[derive(Deserialize, Clone)]
