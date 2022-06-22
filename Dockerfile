@@ -4,10 +4,10 @@ FROM rust:latest AS builder
 
 WORKDIR /app
 
-COPY . .
-
 RUN cargo install sccache
 ENV RUSTC_WRAPPER sccache
+
+COPY . .
 
 RUN cargo build --release
 
