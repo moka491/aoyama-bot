@@ -11,6 +11,6 @@ RUN cargo build --release
 # ------------------------------------
 # Stage 2: Build the final container
 #
-FROM docker.io/library/bitnami/minideb:latest
+FROM docker.io/bitnami/minideb:latest
 COPY --from=builder /app/target/release/aoyama-bot /usr/local/bin/aoyama-bot
 CMD ["aoyama-bot"]
