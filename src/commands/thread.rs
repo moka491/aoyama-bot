@@ -1,10 +1,10 @@
-use std::cmp::Reverse;
-
 use crate::CommandContext;
 use anyhow::{Context, Result};
 use poise::serenity_prelude::Mentionable;
+use tracing::{info, instrument};
 
 /// Mention everyone who joined your thread
+#[instrument(skip(ctx))]
 #[poise::command(slash_command)]
 pub async fn ping(ctx: CommandContext<'_>) -> Result<()> {
     let channel_id = ctx.channel_id();
@@ -17,12 +17,16 @@ pub async fn ping(ctx: CommandContext<'_>) -> Result<()> {
         .await
         .context("It seems like you are not in a thread, dear~")?;
 
-    let oldest_member = thread_members
+    info!("found {} thread members", thread_members.len());
+
+    let thread_owner = thread_members
         .iter()
         .min_by_key(|member| member.join_timestamp.timestamp())
         .context("It seems like there was no user here..? I'm confused")?;
 
-    let owner_id = oldest_member
+    info!("found thread owner");
+
+    let owner_id = thread_owner
         .user_id
         .and_then(|id| if id == author_id { Some(id) } else { None })
         .context("Ara, you shouldn't be doing this without permission~")?;
@@ -34,6 +38,8 @@ pub async fn ping(ctx: CommandContext<'_>) -> Result<()> {
         .map(|id| id.mention().to_string())
         .collect();
 
+    info!("prepared {} mentions", mentions.len());
+
     ctx.send(|m| {
         m.content(format!(
             "Calling forth everyone in this lovely thread!\n{}",
@@ -41,6 +47,8 @@ pub async fn ping(ctx: CommandContext<'_>) -> Result<()> {
         ))
     })
     .await?;
+
+    info!("sent response");
 
     Ok(())
 }

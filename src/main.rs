@@ -8,7 +8,9 @@ use anyhow::Result;
 use dotenv::dotenv;
 use poise::serenity_prelude as serenity;
 use reqwest::Client;
+use tracing::instrument;
 
+#[derive(Debug)]
 pub struct ContextData {
     pub client: Client,
 }
@@ -22,8 +24,10 @@ async fn init_context() -> Result<ContextData> {
 }
 
 #[tokio::main]
+#[instrument]
 async fn main() -> Result<()> {
     dotenv().ok();
+    tracing_subscriber::fmt::init();
 
     let framework = poise::Framework::build()
         .options(poise::FrameworkOptions {

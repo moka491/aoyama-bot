@@ -3,10 +3,12 @@ mod embeds;
 use crate::anilist::embeds::{anime_embed_builder, manga_embed_builder};
 use crate::{core::menu::Menu, CommandContext};
 use anyhow::Result;
+use tracing::instrument;
 
 use crate::api::anilist;
 
 /// Search for anime on AniList
+#[instrument]
 #[poise::command(slash_command)]
 pub async fn anime(
     ctx: CommandContext<'_>,
@@ -20,6 +22,7 @@ pub async fn anime(
 }
 
 /// Search for manga on AniList
+#[instrument]
 #[poise::command(slash_command)]
 pub async fn manga(
     ctx: CommandContext<'_>,
