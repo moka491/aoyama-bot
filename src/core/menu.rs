@@ -5,7 +5,7 @@ use poise::serenity_prelude::{
     InteractionResponseType,
 };
 
-use crate::CommandContext;
+use crate::core::context::CommandContext;
 use anyhow::Result;
 
 pub type EmbedBuilder<T> = fn(T, &mut CreateEmbed) -> &mut CreateEmbed;

@@ -2,34 +2,20 @@ mod api;
 mod commands;
 mod core;
 
+use crate::core::{context::init_context, error::on_error};
 use commands::*;
 
 use anyhow::Result;
 use dotenv::dotenv;
 use poise::serenity_prelude as serenity;
-use reqwest::Client;
-use tracing::instrument;
-
-#[derive(Debug)]
-pub struct ContextData {
-    pub client: Client,
-}
-
-pub type CommandContext<'a> = poise::Context<'a, ContextData, anyhow::Error>;
-
-async fn init_context() -> Result<ContextData> {
-    let client: Client = reqwest::Client::new();
-
-    Ok(ContextData { client })
-}
 
 #[tokio::main]
-#[instrument]
 async fn main() -> Result<()> {
     dotenv().ok();
     tracing_subscriber::fmt::init();
 
     let framework = poise::Framework::build()
+        .token(std::env::var("BOT_TOKEN").expect("Missing BOT_TOKEN"))
         .options(poise::FrameworkOptions {
             commands: vec![
                 anilist::anime(),
@@ -37,13 +23,13 @@ async fn main() -> Result<()> {
                 thread::ping(),
                 admin::register(),
             ],
+            on_error: |error| Box::pin(on_error(error)),
             ..Default::default()
         })
-        .token(std::env::var("BOT_TOKEN").expect("Missing BOT_TOKEN"))
         .intents(serenity::GatewayIntents::non_privileged())
         .user_data_setup(move |_, _, _| Box::pin(init_context()));
 
-    framework.run().await?;
+    framework.run_autosharded().await?;
 
     Ok(())
 }

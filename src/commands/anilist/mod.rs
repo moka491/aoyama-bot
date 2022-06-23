@@ -1,14 +1,14 @@
 mod embeds;
 
-use crate::anilist::embeds::{anime_embed_builder, manga_embed_builder};
-use crate::{core::menu::Menu, CommandContext};
+use crate::{
+    anilist::embeds::{anime_embed_builder, manga_embed_builder},
+    api::anilist,
+    core::{context::CommandContext, menu::Menu},
+};
 use anyhow::Result;
-use tracing::instrument;
-
-use crate::api::anilist;
 
 /// Search for anime on AniList
-#[instrument]
+#[tracing::instrument]
 #[poise::command(slash_command)]
 pub async fn anime(
     ctx: CommandContext<'_>,
@@ -16,13 +16,17 @@ pub async fn anime(
 ) -> Result<()> {
     let anime = anilist::find_anime(&reqwest::Client::new(), &name).await?;
 
+    tracing::info!("found {} anime", anime.len());
+
     Menu::from(anime, anime_embed_builder).send(ctx).await?;
+
+    tracing::info!("spawned anime menu");
 
     Ok(())
 }
 
 /// Search for manga on AniList
-#[instrument]
+#[tracing::instrument]
 #[poise::command(slash_command)]
 pub async fn manga(
     ctx: CommandContext<'_>,
@@ -30,7 +34,11 @@ pub async fn manga(
 ) -> Result<()> {
     let manga = anilist::find_manga(&reqwest::Client::new(), &name).await?;
 
+    tracing::info!("found {} manga", manga.len());
+
     Menu::from(manga, manga_embed_builder).send(ctx).await?;
+
+    tracing::info!("spawned manga menu");
 
     Ok(())
 }
