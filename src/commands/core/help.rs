@@ -2,7 +2,7 @@ use crate::core::context::CommandContext;
 
 use anyhow::Result;
 
-/// Show this menu
+/// Look at all available commands and options
 #[poise::command(slash_command)]
 pub async fn help(
     ctx: CommandContext<'_>,

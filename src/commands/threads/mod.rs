@@ -2,10 +2,10 @@ use crate::core::context::CommandContext;
 use anyhow::{Context, Result};
 use poise::serenity_prelude::Mentionable;
 
-/// Mention everyone who joined your thread
+/// Ping everyone in your thread
 #[tracing::instrument(skip(ctx))]
-#[poise::command(slash_command)]
-pub async fn ping(ctx: CommandContext<'_>) -> Result<()> {
+#[poise::command(slash_command, channel_cooldown = 120)]
+pub async fn summon(ctx: CommandContext<'_>) -> Result<()> {
     let channel_id = ctx.channel_id();
 
     let bot_id = ctx.discord().http.get_current_user().await?.id;
