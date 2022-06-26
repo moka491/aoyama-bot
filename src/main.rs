@@ -3,7 +3,6 @@ mod commands;
 mod core;
 
 use crate::core::{context::init_context, error::on_error};
-use commands::*;
 
 use anyhow::Result;
 use dotenv::dotenv;
@@ -18,10 +17,11 @@ async fn main() -> Result<()> {
         .token(std::env::var("BOT_TOKEN").expect("Missing BOT_TOKEN"))
         .options(poise::FrameworkOptions {
             commands: vec![
-                anilist::anime(),
-                anilist::manga(),
-                thread::ping(),
-                admin::register(),
+                commands::core::help(),
+                commands::anilist::anime(),
+                commands::anilist::manga(),
+                commands::threads::ping(),
+                commands::admin::register_commands(),
             ],
             on_error: |error| Box::pin(on_error(error)),
             ..Default::default()

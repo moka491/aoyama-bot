@@ -1,6 +1,5 @@
-use poise::serenity_prelude::{Color, CreateEmbed};
-
 use crate::api::anilist::model::{Anime, Manga};
+use poise::serenity_prelude::{Color, CreateEmbed};
 
 fn parse_color(mut hex_color: String) -> Option<Color> {
     hex_color.retain(|c| c != '#');
