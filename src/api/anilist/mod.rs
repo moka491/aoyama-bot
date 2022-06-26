@@ -28,6 +28,13 @@ pub async fn find_anime(client: &Client, name: &str) -> Result<Vec<Anime>> {
 pub async fn find_manga(client: &Client, name: &str) -> Result<Vec<Manga>> {
     let variables = HashMap::from([("name", name)]);
 
+    let resp_text: String = anilist_request(client, GET_MANGA, &variables)
+        .await?
+        .text()
+        .await?;
+
+    println!("{}", resp_text);
+
     let resp: GetMangaResponse = anilist_request(client, GET_MANGA, &variables)
         .await?
         .json()

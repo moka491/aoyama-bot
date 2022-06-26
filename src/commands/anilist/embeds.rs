@@ -27,7 +27,9 @@ pub fn anime_embed_builder(anime: Anime, e: &mut CreateEmbed) -> &mut CreateEmbe
         e.field("Episodes", episodes, true);
     };
 
-    e.field("Status", anime.status, true);
+    if let Some(status) = anime.status {
+        e.field("Status", status, true);
+    }
 
     if let Some(season) = anime.season {
         let season_year_str: String = anime
@@ -86,7 +88,9 @@ pub fn manga_embed_builder(manga: Manga, e: &mut CreateEmbed) -> &mut CreateEmbe
         e.field("Volumes", volumes, true);
     };
 
-    e.field("Status", manga.status, true);
+    if let Some(status) = manga.status {
+        e.field("Status", status, true);
+    }
 
     if let Some(score) = manga.average_score {
         e.field("Score (avg)", score, true);

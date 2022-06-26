@@ -6,7 +6,7 @@ use crate::{
 use anyhow::Result;
 
 /// Search for anime on AniList
-#[tracing::instrument]
+#[tracing::instrument(skip(ctx))]
 #[poise::command(slash_command)]
 pub async fn anime(
     ctx: CommandContext<'_>,
