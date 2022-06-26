@@ -22,7 +22,10 @@ pub async fn on_error(error: poise::FrameworkError<'_, ContextData, anyhow::Erro
         }
 
         error => {
-            tracing::error!("invoking default error handler");
+            let error_text = format!("{:?}", error);
+            let error_variant = error_text.splitn(2, "{").next().unwrap_or("");
+
+            tracing::error!("invoking default error handler for {}", error_variant);
 
             if let Err(e) = poise::builtins::on_error(error).await {
                 tracing::error!(%e, "error in default error handler")
