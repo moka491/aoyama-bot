@@ -27,9 +27,11 @@ async fn main() -> Result<()> {
             ..Default::default()
         })
         .intents(serenity::GatewayIntents::non_privileged())
-        .user_data_setup(move |_, _, _| Box::pin(init_context()));
+        .user_data_setup(move |_, _, _| Box::pin(init_context()))
+        .build()
+        .await?;
 
-    framework.run_autosharded().await?;
+    framework.start_autosharded().await?;
 
     Ok(())
 }
