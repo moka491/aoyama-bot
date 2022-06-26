@@ -2,9 +2,19 @@ use crate::core::context::CommandContext;
 use anyhow::{Context, Result};
 use poise::serenity_prelude::Mentionable;
 
-/// Ping everyone in your thread
+/// Summon everyone in your thread
+///
+/// If you are the owner of a thread, you
+/// can use this command to ping everyone else
+/// who is currently in the thread.
+/// This can be very useful to make an announcement
+/// or to summon everyone for an event.
+/// Naturally, this can only be used every 120 seconds, to prevent spam :)
+///
+/// **Usage**
+/// `/summon` (in a thread you are the owner of)
 #[tracing::instrument(skip(ctx))]
-#[poise::command(slash_command, channel_cooldown = 120)]
+#[poise::command(slash_command, category = "Utilities", channel_cooldown = 120)]
 pub async fn summon(ctx: CommandContext<'_>) -> Result<()> {
     let channel_id = ctx.channel_id();
 

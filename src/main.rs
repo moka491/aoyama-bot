@@ -20,7 +20,7 @@ async fn main() -> Result<()> {
                 commands::core::help(),
                 commands::anilist::anime(),
                 commands::anilist::manga(),
-                commands::threads::summon(),
+                commands::utilities::summon(),
                 commands::admin::register_commands(),
             ],
             on_error: |error| Box::pin(on_error(error)),
