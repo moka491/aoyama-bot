@@ -1,7 +1,9 @@
 use crate::{
     api::anilist,
-    commands::anilist::embeds::anime_embed_builder,
-    core::{context::CommandContext, menu::Menu},
+    core::{
+        context::CommandContext, embeds::anime::anime_embed_builder, menu::Menu,
+        menu_select::SelectMenu,
+    },
 };
 use anyhow::Result;
 
@@ -26,7 +28,11 @@ pub async fn anime(
 
     tracing::info!("found {} anime", anime.len());
 
-    Menu::from(anime, anime_embed_builder).send(ctx).await?;
+    SelectMenu::from(anime, anime_embed_builder, |anime| {
+        anime.title.romaji.clone().unwrap_or("".into())
+    })
+    .send(ctx)
+    .await?;
 
     tracing::info!("spawned anime menu");
 

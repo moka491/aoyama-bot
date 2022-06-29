@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use poise::serenity_prelude::{
-    ButtonStyle, CollectComponentInteraction, CreateComponents, CreateEmbed,
+    ButtonStyle, CollectComponentInteraction, CreateComponents, CreateEmbed, CreateSelectMenuOption,
 };
 
 use crate::core::context::CommandContext;
@@ -12,23 +12,31 @@ use super::{
     interactions::{mci_acknowledge, mci_respond_err},
 };
 
-pub struct Menu<T>
+pub type SelectItemMapper<T> = fn(&T) -> String;
+
+pub struct SelectMenu<T>
 where
     T: Clone,
 {
     data: Vec<T>,
-    cur_page_index: i8,
     builder: EmbedBuilder<T>,
+    select_item_mapper: SelectItemMapper<T>,
+    cur_page_index: i8,
 }
 
-impl<T> Menu<T>
+impl<T> SelectMenu<T>
 where
     T: Clone,
 {
-    pub fn from(data: Vec<T>, builder: EmbedBuilder<T>) -> Self {
-        Menu {
+    pub fn from(
+        data: Vec<T>,
+        builder: EmbedBuilder<T>,
+        select_item_mapper: SelectItemMapper<T>,
+    ) -> Self {
+        SelectMenu {
             data,
             builder,
+            select_item_mapper,
             cur_page_index: 0,
         }
     }
@@ -40,26 +48,34 @@ where
     }
 
     fn build_action_row<'a>(&self, c: &'a mut CreateComponents) -> &'a mut CreateComponents {
-        let is_first_page = self.cur_page_index <= 0;
-        let is_last_page = self.cur_page_index as usize >= self.data.len() - 1;
-
         c.create_action_row(|ar| {
             ar.create_button(|b| {
                 b.style(ButtonStyle::Primary)
-                    .label('◀')
-                    .custom_id("button_prev")
-                    .disabled(is_first_page)
+                    .label("Confirm")
+                    .custom_id("button_confirm")
             })
-            .create_button(|b| {
-                b.style(ButtonStyle::Primary)
-                    .label('▶')
-                    .custom_id("button_next")
-                    .disabled(is_last_page)
-            })
-            .create_button(|b| {
-                b.style(ButtonStyle::Primary)
-                    .label('⏹')
-                    .custom_id("button_done")
+        })
+        .create_action_row(|ar| {
+            ar.create_select_menu(|s| {
+                s.custom_id("select_menu").options(|o| {
+                    let titles: Vec<String> = self
+                        .data
+                        .iter()
+                        .map(|item| (self.select_item_mapper)(item))
+                        .collect();
+
+                    let options: Vec<CreateSelectMenuOption> = titles
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, title)| {
+                            let mut opt: CreateSelectMenuOption = CreateSelectMenuOption::default();
+                            opt.label(title).value(i);
+                            opt
+                        })
+                        .collect();
+
+                    o.set_options(options)
+                })
             })
         })
     }
@@ -89,17 +105,16 @@ where
             }
 
             match mci.data.custom_id.as_str() {
-                "button_prev" => self.cur_page_index -= 1,
-                "button_next" => self.cur_page_index += 1,
-                "button_done" => break,
+                "select_menu" => {
+                    let index: i8 = mci.data.values.get(0).unwrap().parse().unwrap();
+                    self.cur_page_index = index;
+
+                    msg.edit(ctx.discord(), |m| m.embed(|e| self.build_embed(e)))
+                        .await?;
+                }
+                "button_confirm" => break,
                 _ => (),
             }
-
-            msg.edit(ctx.discord(), |m| {
-                m.embed(|e| self.build_embed(e))
-                    .components(|c| self.build_action_row(c))
-            })
-            .await?;
 
             mci_acknowledge(&mci, &ctx).await?;
         }

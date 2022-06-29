@@ -2,10 +2,8 @@ use poise::serenity_prelude::{Color, CreateEmbed};
 
 use crate::core::context::ContextData;
 
-pub fn command_error_embed(e: &mut CreateEmbed, err: anyhow::Error) -> &mut CreateEmbed {
-    e.color(Color::DARK_RED)
-        .title("Ara?")
-        .description(err.to_string())
+pub fn command_error_embed<'a>(e: &'a mut CreateEmbed, desc: String) -> &mut CreateEmbed {
+    e.color(Color::DARK_RED).title("Ara?").description(desc)
 }
 
 pub async fn on_error(error: poise::FrameworkError<'_, ContextData, anyhow::Error>) {
@@ -15,7 +13,7 @@ pub async fn on_error(error: poise::FrameworkError<'_, ContextData, anyhow::Erro
 
             let _ = ctx
                 .send(|m| {
-                    m.embed(|embed| command_error_embed(embed, error))
+                    m.embed(|embed| command_error_embed(embed, error.to_string()))
                         .ephemeral(true)
                 })
                 .await;
