@@ -107,6 +107,7 @@ where
             if mci.user.id != ctx.author().id {
                 mci.respond_error(&ctx, Response::NoPermission.to_string())
                     .await?;
+                continue;
             }
 
             match mci.data.custom_id.as_str() {
