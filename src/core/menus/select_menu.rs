@@ -5,21 +5,27 @@ use poise::serenity_prelude::{
 };
 
 use crate::core::{
-    context::CommandContext, interactions::ComponentInteractionExt, responses::Response,
+    context::CommandContext, embeds::EmbedBuilder, interactions::ComponentInteractionExt,
+    responses::Response,
 };
 use anyhow::Result;
 
-use crate::core::embeds::EmbedBuilder;
+pub type ItemTitleMapper<T> = fn(&T) -> String;
 
-pub type SelectItemMapper<T> = fn(&T) -> String;
+fn truncate(s: &str, max_chars: usize) -> &str {
+    match s.char_indices().nth(max_chars) {
+        None => s,
+        Some((idx, _)) => &s[..idx],
+    }
+}
 
 pub struct SelectMenu<T>
 where
     T: Clone,
 {
     data: Vec<T>,
+    dropdown_labels: Vec<String>,
     builder: EmbedBuilder<T>,
-    select_item_mapper: SelectItemMapper<T>,
     cur_page_index: i8,
 }
 
@@ -30,14 +36,21 @@ where
     pub fn from(
         mut data: Vec<T>,
         builder: EmbedBuilder<T>,
-        select_item_mapper: SelectItemMapper<T>,
+        label_mapper: ItemTitleMapper<T>,
     ) -> Self {
+        // truncate data to 25 items (discord select menu limit)
         data.truncate(25);
+        // generate labels and truncate to 100 characters (discord select menu limit)
+        let dropdown_labels = data
+            .iter()
+            .map(label_mapper)
+            .map(|s| truncate(&s, 100).into())
+            .collect();
 
         SelectMenu {
             data,
+            dropdown_labels,
             builder,
-            select_item_mapper,
             cur_page_index: 0,
         }
     }
@@ -52,14 +65,9 @@ where
         c.create_action_row(|ar| {
             ar.create_select_menu(|s| {
                 s.custom_id("select_menu").options(|o| {
-                    let titles: Vec<String> = self
-                        .data
+                    let options: Vec<CreateSelectMenuOption> = self
+                        .dropdown_labels
                         .iter()
-                        .map(|item| (self.select_item_mapper)(item))
-                        .collect();
-
-                    let options: Vec<CreateSelectMenuOption> = titles
-                        .into_iter()
                         .enumerate()
                         .map(|(i, title)| {
                             let mut opt: CreateSelectMenuOption = CreateSelectMenuOption::default();
