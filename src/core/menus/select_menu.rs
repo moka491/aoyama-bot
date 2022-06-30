@@ -4,13 +4,10 @@ use poise::serenity_prelude::{
     ButtonStyle, CollectComponentInteraction, CreateComponents, CreateEmbed, CreateSelectMenuOption,
 };
 
-use crate::core::context::CommandContext;
+use crate::core::{context::CommandContext, interactions::ComponentInteractionExt};
 use anyhow::Result;
 
-use super::{
-    embeds::EmbedBuilder,
-    interactions::{mci_acknowledge, mci_respond_err},
-};
+use crate::core::embeds::EmbedBuilder;
 
 pub type SelectItemMapper<T> = fn(&T) -> String;
 
@@ -36,7 +33,7 @@ where
         data.truncate(25);
 
         SelectMenu {
-            data: data,
+            data,
             builder,
             select_item_mapper,
             cur_page_index: 0,
@@ -98,8 +95,7 @@ where
             .await
         {
             if mci.user.id != ctx.author().id {
-                mci_respond_err(
-                    &mci,
+                mci.respond_error(
                     &ctx,
                     String::from("Excuse me, but I think you can't do that"),
                 )
@@ -118,7 +114,7 @@ where
                 _ => (),
             }
 
-            mci_acknowledge(&mci, &ctx).await?;
+            mci.respond_deferred(&ctx).await?;
         }
 
         // Remove action buttons on "Done" click or after timeout

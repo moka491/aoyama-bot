@@ -1,6 +1,8 @@
 use crate::{
     api::anilist,
-    core::{context::CommandContext, embeds::anime::manga_embed_builder, menu_select::SelectMenu},
+    core::{
+        context::CommandContext, embeds::anime::manga_embed_builder, menus::select_menu::SelectMenu,
+    },
 };
 use anyhow::Result;
 

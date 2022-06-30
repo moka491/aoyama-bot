@@ -4,13 +4,10 @@ use poise::serenity_prelude::{
     ButtonStyle, CollectComponentInteraction, CreateComponents, CreateEmbed,
 };
 
-use crate::core::context::CommandContext;
+use crate::core::{context::CommandContext, interactions::ComponentInteractionExt};
 use anyhow::Result;
 
-use super::{
-    embeds::EmbedBuilder,
-    interactions::{mci_acknowledge, mci_respond_err},
-};
+use crate::core::embeds::EmbedBuilder;
 
 pub struct Menu<T>
 where
@@ -80,8 +77,7 @@ where
             .await
         {
             if mci.user.id != ctx.author().id {
-                mci_respond_err(
-                    &mci,
+                mci.respond_error(
                     &ctx,
                     String::from("Excuse me, but I think you can't do that"),
                 )
@@ -101,7 +97,7 @@ where
             })
             .await?;
 
-            mci_acknowledge(&mci, &ctx).await?;
+            mci.respond_deferred(&ctx).await?;
         }
 
         // Remove action buttons on "Done" click or after timeout

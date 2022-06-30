@@ -1,5 +1,6 @@
-use std::sync::Arc;
+use std::{future::Future, sync::Arc};
 
+use async_trait::async_trait;
 use poise::serenity_prelude::{
     InteractionResponseType, MessageComponentInteraction, SerenityError,
 };
@@ -7,43 +8,37 @@ use poise::serenity_prelude::{
 use super::context::CommandContext;
 use crate::core::error::command_error_embed;
 
-pub async fn mci_acknowledge(
-    mci: &Arc<MessageComponentInteraction>,
-    ctx: &CommandContext<'_>,
-) -> Result<(), SerenityError> {
-    mci.create_interaction_response(ctx.discord(), |ir| {
-        ir.kind(InteractionResponseType::DeferredUpdateMessage)
-    })
-    .await
+#[async_trait]
+pub trait ComponentInteractionExt {
+    async fn respond_deferred(&self, ctx: &CommandContext<'_>) -> Result<(), SerenityError>;
+
+    async fn respond_error(
+        &self,
+        ctx: &CommandContext<'_>,
+        message: String,
+    ) -> Result<(), SerenityError>;
 }
 
-// pub async fn mci_respond<'a, F>(
-//     mci: &Arc<MessageComponentInteraction>,
-//     ctx: &CommandContext<'_>,
-//     response_builder: F,
-// ) -> Result<(), SerenityError>
-// where
-//     for<'b> F: FnOnce(
-//         &'b mut CreateInteractionResponseData<'a>,
-//     ) -> &'b mut CreateInteractionResponseData<'a>,
-// {
-//     mci.create_interaction_response(ctx.discord(), |r| {
-//         r.kind(InteractionResponseType::ChannelMessageWithSource)
-//             .interaction_response_data(response_builder)
-//     })
-//     .await
-// }
+#[async_trait]
+impl ComponentInteractionExt for MessageComponentInteraction {
+    async fn respond_deferred(&self, ctx: &CommandContext<'_>) -> Result<(), SerenityError> {
+        self.create_interaction_response(ctx.discord(), |ir| {
+            ir.kind(InteractionResponseType::DeferredUpdateMessage)
+        })
+        .await
+    }
 
-pub async fn mci_respond_err(
-    mci: &Arc<MessageComponentInteraction>,
-    ctx: &CommandContext<'_>,
-    message: String,
-) -> Result<(), SerenityError> {
-    mci.create_interaction_response(ctx.discord(), |r| {
-        r.kind(InteractionResponseType::ChannelMessageWithSource)
-            .interaction_response_data(|d| {
-                d.ephemeral(true).embed(|e| command_error_embed(e, message))
-            })
-    })
-    .await
+    async fn respond_error(
+        &self,
+        ctx: &CommandContext<'_>,
+        message: String,
+    ) -> Result<(), SerenityError> {
+        self.create_interaction_response(ctx.discord(), |r| {
+            r.kind(InteractionResponseType::ChannelMessageWithSource)
+                .interaction_response_data(|d| {
+                    d.ephemeral(true).embed(|e| command_error_embed(e, message))
+                })
+        })
+        .await
+    }
 }
