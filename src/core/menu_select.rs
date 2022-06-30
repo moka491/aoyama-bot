@@ -29,12 +29,14 @@ where
     T: Clone,
 {
     pub fn from(
-        data: Vec<T>,
+        mut data: Vec<T>,
         builder: EmbedBuilder<T>,
         select_item_mapper: SelectItemMapper<T>,
     ) -> Self {
+        data.truncate(25);
+
         SelectMenu {
-            data,
+            data: data,
             builder,
             select_item_mapper,
             cur_page_index: 0,
@@ -49,13 +51,6 @@ where
 
     fn build_action_row<'a>(&self, c: &'a mut CreateComponents) -> &'a mut CreateComponents {
         c.create_action_row(|ar| {
-            ar.create_button(|b| {
-                b.style(ButtonStyle::Primary)
-                    .label("Confirm")
-                    .custom_id("button_confirm")
-            })
-        })
-        .create_action_row(|ar| {
             ar.create_select_menu(|s| {
                 s.custom_id("select_menu").options(|o| {
                     let titles: Vec<String> = self
@@ -76,6 +71,13 @@ where
 
                     o.set_options(options)
                 })
+            })
+        })
+        .create_action_row(|ar| {
+            ar.create_button(|b| {
+                b.style(ButtonStyle::Primary)
+                    .label("Confirm")
+                    .custom_id("button_confirm")
             })
         })
     }
@@ -99,7 +101,7 @@ where
                 mci_respond_err(
                     &mci,
                     &ctx,
-                    String::from("Excuse me, but that's not for your hands to touch"),
+                    String::from("Excuse me, but I think you can't do that"),
                 )
                 .await?;
             }

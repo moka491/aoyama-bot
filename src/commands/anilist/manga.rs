@@ -1,6 +1,6 @@
 use crate::{
     api::anilist,
-    core::{context::CommandContext, embeds::anime::manga_embed_builder, menu::Menu},
+    core::{context::CommandContext, embeds::anime::manga_embed_builder, menu_select::SelectMenu},
 };
 use anyhow::Result;
 
@@ -25,7 +25,11 @@ pub async fn manga(
 
     tracing::info!("found {} manga", manga.len());
 
-    Menu::from(manga, manga_embed_builder).send(ctx).await?;
+    SelectMenu::from(manga, manga_embed_builder, |manga| {
+        manga.title.romaji.clone().unwrap_or("".into())
+    })
+    .send(ctx)
+    .await?;
 
     tracing::info!("spawned manga menu");
 
