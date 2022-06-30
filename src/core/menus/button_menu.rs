@@ -9,7 +9,7 @@ use anyhow::Result;
 
 use crate::core::embeds::EmbedBuilder;
 
-pub struct Menu<T>
+pub struct ButtonMenu<T>
 where
     T: Clone,
 {
@@ -18,12 +18,12 @@ where
     builder: EmbedBuilder<T>,
 }
 
-impl<T> Menu<T>
+impl<T> ButtonMenu<T>
 where
     T: Clone,
 {
     pub fn from(data: Vec<T>, builder: EmbedBuilder<T>) -> Self {
-        Menu {
+        ButtonMenu {
             data,
             builder,
             cur_page_index: 0,

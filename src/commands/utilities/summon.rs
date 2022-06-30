@@ -1,4 +1,4 @@
-use crate::core::context::CommandContext;
+use crate::core::{context::CommandContext, responses::Response};
 use anyhow::{Context, Result};
 use poise::serenity_prelude::Mentionable;
 
@@ -24,21 +24,21 @@ pub async fn summon(ctx: CommandContext<'_>) -> Result<()> {
     let thread_members = &channel_id
         .get_thread_members(&ctx.discord().http)
         .await
-        .context("It seems like you are not in a thread, dear~")?;
+        .context(Response::NotInThread.to_string())?;
 
     tracing::info!("found {} thread members", thread_members.len());
 
     let thread_owner = thread_members
         .iter()
         .min_by_key(|member| member.join_timestamp.timestamp())
-        .context("It seems like there was no user here..? I'm confused")?;
+        .context(Response::NoUsersInThread.to_string())?;
 
     tracing::info!(?thread_owner, "found thread owner");
 
     let owner_id = thread_owner
         .user_id
         .and_then(|id| if id == author_id { Some(id) } else { None })
-        .context("Ara, you shouldn't be doing this without permission~")?;
+        .context(Response::NoPermission.to_string())?;
 
     let mentions: Vec<String> = thread_members
         .into_iter()

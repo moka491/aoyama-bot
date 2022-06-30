@@ -2,7 +2,7 @@ mod api;
 mod commands;
 mod core;
 
-use crate::core::{context::init_context, error::on_error};
+use crate::core::{context::init_context, error_handler::on_error};
 
 use anyhow::Result;
 use dotenv::dotenv;

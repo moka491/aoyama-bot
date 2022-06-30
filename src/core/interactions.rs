@@ -1,12 +1,10 @@
-use std::{future::Future, sync::Arc};
-
 use async_trait::async_trait;
 use poise::serenity_prelude::{
     InteractionResponseType, MessageComponentInteraction, SerenityError,
 };
 
 use super::context::CommandContext;
-use crate::core::error::command_error_embed;
+use crate::core::error_handler::command_error_embed;
 
 #[async_trait]
 pub trait ComponentInteractionExt {

@@ -11,6 +11,7 @@ pub async fn on_error(error: poise::FrameworkError<'_, ContextData, anyhow::Erro
         poise::FrameworkError::Command { error, ctx } => {
             tracing::error!(%error, "command error");
 
+            // Inform the user
             let _ = ctx
                 .send(|m| {
                     m.embed(|embed| command_error_embed(embed, error.to_string()))

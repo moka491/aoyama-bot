@@ -4,7 +4,9 @@ use poise::serenity_prelude::{
     ButtonStyle, CollectComponentInteraction, CreateComponents, CreateEmbed, CreateSelectMenuOption,
 };
 
-use crate::core::{context::CommandContext, interactions::ComponentInteractionExt};
+use crate::core::{
+    context::CommandContext, interactions::ComponentInteractionExt, responses::Response,
+};
 use anyhow::Result;
 
 use crate::core::embeds::EmbedBuilder;
@@ -95,11 +97,8 @@ where
             .await
         {
             if mci.user.id != ctx.author().id {
-                mci.respond_error(
-                    &ctx,
-                    String::from("Excuse me, but I think you can't do that"),
-                )
-                .await?;
+                mci.respond_error(&ctx, Response::NoPermission.to_string())
+                    .await?;
             }
 
             match mci.data.custom_id.as_str() {
