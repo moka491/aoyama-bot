@@ -22,6 +22,7 @@ async fn main() -> Result<()> {
                 commands::anilist::manga(),
                 commands::utilities::summon(),
                 commands::admin::register_commands(),
+                commands::donmai::image::image(),
             ],
             on_error: |error| Box::pin(on_error(error)),
             ..Default::default()
