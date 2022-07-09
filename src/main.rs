@@ -18,11 +18,12 @@ async fn main() -> Result<()> {
         .options(poise::FrameworkOptions {
             commands: vec![
                 commands::core::help(),
-                commands::anilist::anime(),
-                commands::anilist::manga(),
+                commands::anime::anime(),
+                commands::anime::manga(),
+                commands::anime::image(),
                 commands::utilities::summon(),
                 commands::admin::register_commands(),
-                commands::donmai::image::image(),
+
             ],
             on_error: |error| Box::pin(on_error(error)),
             ..Default::default()

@@ -23,7 +23,7 @@ pub async fn anime(
     ctx: CommandContext<'_>,
     #[description = "Name of the anime to search for"] name: String,
 ) -> Result<()> {
-    let anime = anilist::find_anime(&reqwest::Client::new(), &name).await?;
+    let anime = anilist::find_anime(&ctx.data().client, &name).await?;
 
     tracing::info!("found {} anime", anime.len());
 

@@ -6,14 +6,21 @@ use serde::{Deserialize, Serialize};
 pub struct DonmaiImage {
     pub id: u32,
     pub file_url: String,
+    pub large_file_url: String,
 }
 
-pub async fn get_random_picture(client: &Client, search_tags: String) -> Result<DonmaiImage> {
-    let image: DonmaiImage = client
-        .get(format!(
+pub async fn get_random_picture(client: &Client, tags: Option<String>) -> Result<DonmaiImage> {
+
+    let url: String = match tags {
+        Some(t) => format!(
             "https://donmai.moe/posts/random.json?tags={}",
-            search_tags
-        ))
+            t
+        ),
+        None => "https://donmai.moe/posts/random.json".into()
+    };
+
+    let image: DonmaiImage = client
+        .get(url)
         .send()
         .await?
         .json()

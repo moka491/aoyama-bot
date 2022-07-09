@@ -23,7 +23,7 @@ pub async fn manga(
     ctx: CommandContext<'_>,
     #[description = "Name of the manga to search for"] name: String,
 ) -> Result<()> {
-    let manga = anilist::find_manga(&reqwest::Client::new(), &name).await?;
+    let manga = anilist::find_manga(&ctx.data().client, &name).await?;
 
     tracing::info!("found {} manga", manga.len());
 
