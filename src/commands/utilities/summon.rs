@@ -1,6 +1,6 @@
 use crate::core::{context::CommandContext, responses::Response};
 use anyhow::{Context, Result};
-use poise::serenity_prelude::Mentionable;
+use poise::serenity_prelude::{Mentionable, ThreadMember};
 
 /// Summon everyone in your thread
 ///
@@ -14,7 +14,7 @@ use poise::serenity_prelude::Mentionable;
 /// **Usage**
 /// `/summon` (in a thread you are the owner of)
 #[tracing::instrument(skip(ctx))]
-#[poise::command(slash_command, category = "Utilities", channel_cooldown = 120)]
+#[poise::command(slash_command, category = "Utilities")]
 pub async fn summon(ctx: CommandContext<'_>) -> Result<()> {
     let channel_id = ctx.channel_id();
 
@@ -28,9 +28,9 @@ pub async fn summon(ctx: CommandContext<'_>) -> Result<()> {
 
     tracing::info!(?thread_members, "found {} thread members", thread_members.len());
 
-    let thread_owner = thread_members
+    let thread_owner: &ThreadMember = thread_members
         .iter()
-        .min_by_key(|member| member.join_timestamp.timestamp())
+        .min_by_key(|member| member.join_timestamp.timestamp_millis())
         .context(Response::NoUsersInThread.to_string())?;
 
     tracing::info!(?thread_owner, "found thread owner");
