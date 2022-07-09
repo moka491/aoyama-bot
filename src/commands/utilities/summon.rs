@@ -26,7 +26,7 @@ pub async fn summon(ctx: CommandContext<'_>) -> Result<()> {
         .await
         .context(Response::NotInThread.to_string())?;
 
-    tracing::info!("found {} thread members", thread_members.len());
+    tracing::info!(?thread_members, "found {} thread members", thread_members.len());
 
     let thread_owner = thread_members
         .iter()
